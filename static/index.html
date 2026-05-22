@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medical Symptom Analyser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #f8f9fc;
+      --bg2:     #ffffff;
+      --bg3:     #f1f3f8;
+      --border:  #e2e6ef;
+      --text:    #0f1117;
+      --muted:   #6b7280;
+      --dim:     #9ca3af;
+      --accent:  #2563eb;
+      --accent2: #1d4ed8;
+      --green:   #059669;
+      --amber:   #d97706;
+      --red:     #dc2626;
+      --radius:  14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .logo-text {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--amber);
+      background: rgba(217,119,6,0.08);
+      border: 1px solid rgba(217,119,6,0.2);
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .header-badge::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 56px 24px 80px;
+    }
+
+    /* ── INTRO ── */
+    .intro {
+      margin-bottom: 40px;
+    }
+
+    .intro-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .intro h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .intro p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 580px;
+    }
+
+    /* ── DISCLAIMER BANNER ── */
+    .disclaimer {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(220,38,38,0.04);
+      border: 1px solid rgba(220,38,38,0.15);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
+
+    .disclaimer-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .disclaimer p {
+      font-size: 13px;
+      color: #b91c1c;
+      line-height: 1.6;
+    }
+
+    .disclaimer strong { font-weight: 600; }
+
+    /* ── INPUT PANEL ── */
+    .input-panel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .input-label {
+      padding: 18px 24px 0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      padding: 14px 24px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text);
+      background: transparent;
+      min-height: 130px;
+    }
+
+    textarea::placeholder { color: var(--dim); }
+
+    .input-footer {
+      border-top: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg3);
+    }
+
+    .char-count {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--dim);
+    }
+
+    .btn-analyse {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-analyse:hover  { background: var(--accent2); }
+    .btn-analyse:active { transform: scale(0.98); }
+    .btn-analyse:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    /* ── EXAMPLE CHIPS ── */
+    .examples-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 36px;
+      align-items: center;
+    }
+
+    .examples-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--dim);
+      margin-right: 4px;
+    }
+
+    .example-chip {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .example-chip:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(37,99,235,0.04);
+    }
+
+    /* ── STATUS ── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      min-height: 20px;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESULTS ── */
+    .results { display: none; flex-direction: column; gap: 20px; }
+
+    /* severity badge */
+    .severity-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .severity-icon { font-size: 22px; flex-shrink: 0; }
+
+    .severity-info { flex: 1; }
+
+    .severity-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 3px;
+    }
+
+    .severity-val {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .sev-mild   { color: var(--green); }
+    .sev-mod    { color: var(--amber); }
+    .sev-urgent { color: var(--red);   }
+
+    /* analysis card */
+    .analysis-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .card-head {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-head-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .card-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tag-ai {
+      background: rgba(37,99,235,0.08);
+      color: var(--accent);
+      border: 1px solid rgba(37,99,235,0.2);
+    }
+
+    .tag-ctx {
+      background: rgba(5,150,105,0.08);
+      color: var(--green);
+      border: 1px solid rgba(5,150,105,0.2);
+    }
+
+    .card-body {
+      padding: 22px 24px;
+      font-size: 14px;
+      line-height: 1.75;
+      color: #374151;
+      white-space: pre-wrap;
+    }
+
+    /* context card */
+    .context-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .context-toggle {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .context-toggle.open { border-bottom-color: var(--border); }
+
+    .context-toggle-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .context-toggle-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .context-arrow {
+      font-size: 11px;
+      color: var(--dim);
+      transition: transform 0.2s;
+    }
+
+    .context-arrow.open { transform: rotate(180deg); }
+
+    .context-body {
+      display: none;
+      padding: 20px 24px;
+      font-size: 12.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      background: var(--bg3);
+    }
+
+    /* reset btn */
+    .btn-reset {
+      align-self: flex-start;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .btn-reset:hover { color: var(--text); border-color: #9ca3af; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg2);
+    }
+
+    .footer-left {
+      font-size: 12px;
+      color: var(--dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .footer-left span { color: var(--accent); }
+
+    .footer-right {
+      font-size: 12px;
+      color: var(--dim);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🩺</div>
+      <div class="logo-text">SymptomAI</div>
+    </div>
+    <div class="header-badge">Not a substitute for medical advice</div>
+  </header>
+
+  <main>
+
+    <!-- INTRO -->
+    <div class="intro">
+      <div class="intro-eyebrow">AI-Powered Triage Assistant</div>
+      <h1>Describe your symptoms.<br>Get instant AI analysis.</h1>
+      <p>Powered by RAG over medical knowledge — retrieves relevant clinical context before generating a response. For informational purposes only.</p>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+      <div class="disclaimer-icon">⚠️</div>
+      <p><strong>Medical Disclaimer:</strong> This tool is for informational purposes only and does not constitute medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional for any medical concerns.</p>
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-panel">
+      <div class="input-label">Symptom Description</div>
+      <textarea
+        id="symptomInput"
+        placeholder="Describe your symptoms in plain English — e.g. I have had a persistent headache for 2 days, mild fever around 99°F, and fatigue. No nausea."
+        oninput="updateCount()"
+        maxlength="600"
+      ></textarea>
+      <div class="input-footer">
+        <span class="char-count"><span id="charCount">0</span> / 600</span>
+        <button class="btn-analyse" id="analyseBtn" onclick="runAnalysis()">
+          <span>Analyse Symptoms</span>
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- EXAMPLE CHIPS -->
+    <div class="examples-row">
+      <span class="examples-label">Try an example:</span>
+      <div class="example-chip" onclick="fillExample(this)">Fever, sore throat, fatigue for 3 days</div>
+      <div class="example-chip" onclick="fillExample(this)">Persistent headache, light sensitivity, nausea</div>
+      <div class="example-chip" onclick="fillExample(this)">Sharp chest pain when breathing deeply</div>
+      <div class="example-chip" onclick="fillExample(this)">Burning sensation when urinating, frequent urge</div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status-row" id="statusRow">
+      <div class="spinner" id="spinner"></div>
+      <span id="statusText"></span>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" id="results">
+
+      <!-- SEVERITY -->
+      <div class="severity-bar" id="severityBar">
+        <div class="severity-icon" id="sevIcon"></div>
+        <div class="severity-info">
+          <div class="severity-label">Assessed Urgency</div>
+          <div class="severity-val" id="sevVal"></div>
+        </div>
+      </div>
+
+      <!-- AI ANALYSIS -->
+      <div class="analysis-card">
+        <div class="card-head">
+          <div class="card-head-title">AI Analysis</div>
+          <div class="card-tag tag-ai">Mistral 7B · OpenRouter</div>
+        </div>
+        <div class="card-body" id="analysisBody"></div>
+      </div>
+
+      <!-- RETRIEVED CONTEXT (collapsible) -->
+      <div class="context-card">
+        <button class="context-toggle" id="contextToggle" onclick="toggleContext()">
+          <div class="context-toggle-left">
+            <div class="card-tag tag-ctx">RAG Context</div>
+            <div class="context-toggle-title">Retrieved Medical Knowledge</div>
+          </div>
+          <div class="context-arrow" id="contextArrow">▼</div>
+        </button>
+        <div class="context-body" id="contextBody"></div>
+      </div>
+
+      <!-- RESET -->
+      <button class="btn-reset" onclick="resetForm()">← Analyse new symptoms</button>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">Built with <span>FastAPI</span> · <span>Pinecone</span> · <span>RAG</span></div>
+    <div class="footer-right">AI Mastery Roadmap · Project 06</div>
+  </footer>
+
+<script>
+  // Update character count as user types
+  function updateCount() {
+    const val = document.getElementById('symptomInput').value;
+    document.getElementById('charCount').textContent = val.length;
+  }
+
+  // Fill textarea with example text when chip is clicked
+  function fillExample(el) {
+    document.getElementById('symptomInput').value = el.textContent;
+    updateCount();
+    document.getElementById('symptomInput').focus();
+  }
+
+  // Main analysis function
+  async function runAnalysis() {
+    const symptoms = document.getElementById('symptomInput').value.trim();
+
+    if (!symptoms) {
+      setStatus('Please describe your symptoms first.');
+      return;
+    }
+
+    if (symptoms.length < 10) {
+      setStatus('Please provide more detail about your symptoms.');
+      return;
+    }
+
+    // Show loading state
+    setLoading(true);
+    setStatus('Retrieving relevant medical knowledge...');
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('analyseBtn').disabled = true;
+
+    try {
+      const response = await fetch('/analyse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symptoms })
+      });
+
+      if (!response.ok) throw new Error('Server error — please try again.');
+
+      const data = await response.json();
+
+      // Render results
+      renderResults(data);
+      setStatus('');
+      setLoading(false);
+
+    } catch (err) {
+      setStatus('Error: ' + err.message);
+      setLoading(false);
+    }
+
+    document.getElementById('analyseBtn').disabled = false;
+  }
+
+  // Render the results on screen
+  function renderResults(data) {
+    // Detect urgency from analysis text
+    const text = data.analysis.toLowerCase();
+    const sevBar  = document.getElementById('severityBar');
+    const sevIcon = document.getElementById('sevIcon');
+    const sevVal  = document.getElementById('sevVal');
+
+    if (text.includes('urgent') || text.includes('emergency') || text.includes('immediately') || text.includes('call 911')) {
+      sevIcon.textContent = '🔴';
+      sevVal.textContent  = 'Urgent — seek medical attention promptly';
+      sevVal.className    = 'severity-val sev-urgent';
+    } else if (text.includes('doctor') || text.includes('moderate') || text.includes('medical attention')) {
+      sevIcon.textContent = '🟡';
+      sevVal.textContent  = 'Moderate — consult a doctor if symptoms persist';
+      sevVal.className    = 'severity-val sev-mod';
+    } else {
+      sevIcon.textContent = '🟢';
+      sevVal.textContent  = 'Mild — manageable at home with rest and fluids';
+      sevVal.className    = 'severity-val sev-mild';
+    }
+
+    // Render AI analysis
+    document.getElementById('analysisBody').innerHTML = data.analysis
+  .replace(/### (.+)/g, '<strong style="display:block;margin:14px 0 4px;font-size:14px;">$1</strong>')
+  .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  .replace(/\n/g, '<br>');
+
+    // Render retrieved context
+    document.getElementById('contextBody').innerHTML = data.context;
+
+    // Show results section
+    document.getElementById('results').style.display = 'flex';
+
+    // Smooth scroll to results
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Toggle the retrieved context section open/closed
+  function toggleContext() {
+    const body    = document.getElementById('contextBody');
+    const arrow   = document.getElementById('contextArrow');
+    const toggle  = document.getElementById('contextToggle');
+    const isOpen  = body.style.display === 'block';
+
+    body.style.display   = isOpen ? 'none' : 'block';
+    arrow.className      = isOpen ? 'context-arrow' : 'context-arrow open';
+    toggle.className     = isOpen ? 'context-toggle' : 'context-toggle open';
+  }
+
+  // Reset the form
+  function resetForm() {
+    document.getElementById('symptomInput').value = '';
+    document.getElementById('charCount').textContent = '0';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('statusText').textContent = '';
+    document.getElementById('contextBody').style.display = 'none';
+    document.getElementById('contextArrow').className = 'context-arrow';
+    document.getElementById('contextToggle').className = 'context-toggle';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setStatus(msg) {
+    document.getElementById('statusText').textContent = msg;
+  }
+
+  function setLoading(on) {
+    document.getElementById('spinner').style.display = on ? 'block' : 'none';
+  }
+
+  // Allow Ctrl+Enter to submit
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.key === 'Enter') runAnalysis();
+  });
+</script>
+
+</body>
+</html>
